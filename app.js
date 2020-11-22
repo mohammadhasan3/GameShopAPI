@@ -1,5 +1,9 @@
 const express = require("express");
+const bodyParser = require("body-parser");
+const slugify = require("slugify");
+
 const app = express();
+app.use(bodyParser.json());
 let games = require("./games");
 const cors = require("cors");
 app.use(cors());
@@ -22,6 +26,14 @@ app.delete("/games/:gameId", (req, res) => {
   } else {
     res.status(404).json({ message: "Game not found" });
   }
+});
+
+app.post("/games", (req, res) => {
+  const id = games[games.length - 1].id + 1;
+  const slug = slugify(req.body.name, { lower: true });
+  const newGame = { id, slug, ...req.body };
+  games.push(newGame);
+  res.status(201).json(newGame);
 });
 
 app.listen(8000, () => {
