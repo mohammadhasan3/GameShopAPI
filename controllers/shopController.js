@@ -1,6 +1,4 @@
-let shops = require("../routes/shops");
-const { Shop } = require("../db/models");
-const slugify = require("slugify");
+const { Shop, Game } = require("../db/models");
 
 //FetchShops
 exports.fetchShop = async (shopId, next) => {
@@ -12,11 +10,38 @@ exports.fetchShop = async (shopId, next) => {
   }
 };
 
+//Create Game
+exports.gameCreate = async (req, res, next) => {
+  try {
+    if (req.file) {
+      req.body.image = `${req.protocol}://${req.get("host")}/media/${
+        req.file.filename
+      }`;
+    }
+    req.body.shopId = req.shop.id;
+    console.log(0);
+    const newGame = await Game.create(req.body);
+    console.log(1);
+    console.log(req.body);
+    res.status(201).json(newGame);
+  } catch (err) {
+    console.log(2);
+    next(err);
+  }
+};
+
 //ShopsList
-exports.shopsList = async (req, res) => {
+exports.shopsList = async (req, res, next) => {
   try {
     const shops = await Shop.findAll({
       attributes: { exclude: ["createdAt", "updatedAt"] },
+      include: [
+        {
+          model: Game,
+          as: "games",
+          attributes: ["id"],
+        },
+      ],
     });
     res.json(shops);
   } catch (err) {
@@ -24,7 +49,7 @@ exports.shopsList = async (req, res) => {
   }
 };
 
-//Delete
+//Delete Shop
 exports.shopDelete = async (req, res) => {
   const { shopId } = req.params;
   try {
@@ -40,7 +65,7 @@ exports.shopDelete = async (req, res) => {
   }
 };
 
-//Create
+//Create Shop
 exports.shopCreate = async (req, res) => {
   try {
     if (req.file) {
@@ -55,7 +80,7 @@ exports.shopCreate = async (req, res) => {
   }
 };
 
-//Update
+//Update Shop
 exports.shopUpdate = async (req, res, next) => {
   const { shopId } = req.params;
 

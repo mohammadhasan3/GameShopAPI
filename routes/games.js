@@ -19,16 +19,13 @@ router.param("gameId", async (req, res, next, gameId) => {
   }
 });
 
-//Read
+//Read Game
 router.get("/", gamesList);
 
-//Delete
+//Delete Game
 router.delete("/:gameId", gameDelete);
 
-//update
-router.post("/", upload.single("image"), gameCreate);
-
-//Create
+//Update Game
 router.put("/:gameId", upload.single("image"), gameUpdate);
 
 module.exports = router;

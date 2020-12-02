@@ -1,6 +1,7 @@
 let games = require("../routes/games");
-const { Game } = require("../db/models");
+const { Game, Shop } = require("../db/models");
 const slugify = require("slugify");
+const { shopCreate } = require("./shopController");
 
 //FetchGames
 exports.fetchGame = async (gameId, next) => {
@@ -17,6 +18,11 @@ exports.gamesList = async (req, res) => {
   try {
     const games = await Game.findAll({
       attributes: { exclude: ["createdAt", "updatedAt"] },
+      include: {
+        model: Shop,
+        as: "shop",
+        attributes: ["name"],
+      },
     });
     res.json(games);
   } catch (err) {
@@ -35,21 +41,6 @@ exports.gameDelete = async (req, res) => {
     } else {
       res.status(404).json({ message: "Game not found" });
     }
-  } catch (err) {
-    next(err);
-  }
-};
-
-//Create
-exports.gameCreate = async (req, res) => {
-  try {
-    if (req.file) {
-      req.body.image = `${req.protocol}://${req.get("host")}/media/${
-        req.file.filename
-      }`;
-    }
-    const newGame = await Game.create(req.body);
-    res.status(201).json(newGame);
   } catch (err) {
     next(err);
   }
