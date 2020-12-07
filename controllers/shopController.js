@@ -19,13 +19,9 @@ exports.gameCreate = async (req, res, next) => {
       }`;
     }
     req.body.shopId = req.shop.id;
-    console.log(0);
     const newGame = await Game.create(req.body);
-    console.log(1);
-    console.log(req.body);
     res.status(201).json(newGame);
   } catch (err) {
-    console.log(2);
     next(err);
   }
 };

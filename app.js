@@ -3,6 +3,7 @@ const db = require("./db/models");
 const bodyParser = require("body-parser");
 const gameRoutes = require("./routes/games");
 const shopRoutes = require("./routes/shops");
+const userRoutes = require("./routes/users");
 const cors = require("cors");
 const path = require("path");
 const app = express();
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 app.use("/games", gameRoutes);
 app.use("/shops", shopRoutes);
 app.use("/media", express.static(path.join(__dirname, "media")));
+app.use(userRoutes);
 
 app.use((req, res, next) => {
   res.status(404).json({ message: "Path not found" });
